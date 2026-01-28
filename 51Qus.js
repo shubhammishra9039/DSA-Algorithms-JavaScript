@@ -1,0 +1,13 @@
+// 69. Merge two objects.
+
+// Input: { a: 1 }, { b: 2 }
+// Output:{ a: 1, b: 2 }
+
+// TO DO  With Out inbuilt hme solve krna h
+const obj1 =  { a: 1 }
+const obj2 = { b: 2 }
+
+
+const result = Object.assign({},obj1,obj2)
+
+console.log(result)

@@ -1,0 +1,147 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Chat Trigger",
+      "type": "n8n-nodes-base.chatTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "propertyName": "message",
+        "rules": [
+          { "value": "hello", "operation": "equal" },
+          { "value": "yes", "operation": "equal" },
+          { "value": "1bhk", "operation": "equal" },
+          { "value": "2bhk", "operation": "equal" },
+          { "value": "3bhk", "operation": "equal" }
+        ]
+      },
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "reply",
+              "value": "Hello 👋 Welcome! Are you looking for a flat? (yes / no)"
+            }
+          ]
+        }
+      },
+      "name": "Greeting",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [650, 100]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "reply",
+              "value": "Great! Please choose flat type:\n1BHK\n2BHK\n3BHK"
+            }
+          ]
+        }
+      },
+      "name": "Ask Flat Type",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [650, 220]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "reply",
+              "value": "Please share your Email ID."
+            }
+          ]
+        }
+      },
+      "name": "Ask Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [650, 350]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "reply",
+              "value": "Please share your Mobile Number."
+            }
+          ]
+        }
+      },
+      "name": "Ask Mobile",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [650, 480]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "sheetId": "YOUR_GOOGLE_SHEET_ID",
+        "range": "Sheet1!A:D",
+        "valueInputMode": "USER_ENTERED",
+        "data": [
+          [
+            "={{new Date().toISOString()}}",
+            "={{$json.message}}",
+            "={{$json.email}}",
+            "={{$json.mobile}}"
+          ]
+        ]
+      },
+      "name": "Save to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [650, 620],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "responseBody": "Thank you 🙏 Our relationship manager will contact you shortly.",
+        "responseCode": 200
+      },
+      "name": "Final Reply",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 620]
+    }
+  ],
+  "connections": {
+    "Chat Trigger": {
+      "main": [[{ "node": "Switch", "type": "main", "index": 0 }]]
+    },
+    "Switch": {
+      "main": [
+        [{ "node": "Greeting", "type": "main", "index": 0 }],
+        [{ "node": "Ask Flat Type", "type": "main", "index": 0 }],
+        [{ "node": "Ask Email", "type": "main", "index": 0 }],
+        [{ "node": "Ask Email", "type": "main", "index": 0 }],
+        [{ "node": "Ask Email", "type": "main", "index": 0 }]
+      ]
+    },
+    "Ask Mobile": {
+      "main": [[{ "node": "Save to Google Sheet", "type": "main", "index": 0 }]]
+    },
+    "Save to Google Sheet": {
+      "main": [[{ "node": "Final Reply", "type": "main", "index": 0 }]]
+    }
+  }
+}
